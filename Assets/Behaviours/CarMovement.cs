@@ -20,6 +20,7 @@ public class CarMovement : MonoBehaviour
     void FixedUpdate()
     {
         float forward = moveAction.ReadValue<Vector2>().y;
-        rb.AddForce(transform.forward * forward * moveForce);
+        float speed = forward < 0 ? moveForce * 0.75f : moveForce;
+        rb.AddForce(transform.forward * forward * speed);
     }
 }
