@@ -211,6 +211,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8130395142153788644}
+  - component: {fileID: 8130395142153788645}
   m_Layer: 0
   m_Name: Wheel
   m_TagString: Untagged
@@ -350,3 +351,15 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &8130395142153788645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7853419992926110912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1e2f3a4c5d6e7f8a9b0c1d2e3f4a5b6, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
