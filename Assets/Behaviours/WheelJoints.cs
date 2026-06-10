@@ -8,8 +8,7 @@ public class WheelJoints : MonoBehaviour
 
         transform.SetParent(null);
 
-        var rb = gameObject.AddComponent<Rigidbody>();
-        rb.mass = 0.1f;
+        var rb = GetComponent<Rigidbody>() ?? gameObject.AddComponent<Rigidbody>();
 
         var joint = gameObject.AddComponent<HingeJoint>();
         joint.connectedBody = carBody;
