@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "$csChanges = git -C \"C:\\Projects\\Game-Dev-Workshop\" status --short 2>$null | Where-Object { $_ -match '\\.cs$' }; if (-not $csChanges) { exit 0 }; $unity = \"C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.9f1\\Editor\\Unity.exe\"; if (-not (Test-Path $unity)) { exit 0 }; $results = Join-Path $env:TEMP \"unity-test-results-gdw.xml\"; $log = Join-Path $env:TEMP \"unity-test-gdw.log\"; & $unity -batchmode -runTests -projectPath \"C:\\Projects\\Game-Dev-Workshop\" -testPlatform EditMode -testResults $results -logFile $log -nographics 2>$null; if (Test-Path $results) { [xml]$xml = Get-Content $results; $nodes = @($xml.SelectNodes(\"//test-case[@result='Failed']\")); $failed = $nodes.Count; if ($failed -gt 0) { $names = ($nodes | ForEach-Object { $_.name }) -join ', '; $msg = \"Unit tests are failing ($failed failed): $names. This may be due to a recent code change - check the Test Runner in Unity (Window > General > Test Runner) for details.\"; Write-Output \"{`\"systemMessage`\": `\"$msg`\"}\"; exit 2 } }",
+            "asyncRewake": true,
+            "timeout": 300,
+            "statusMessage": "Running Unity EditMode tests...",
+            "rewakeSummary": "Unity test results",
+            "rewakeMessage": "Unity EditMode tests finished with failures:"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "$count = (git -C \"C:\\Projects\\Game-Dev-Workshop\" status --short 2>$null | Measure-Object -Line).Lines; if ($count -ge 5) { Write-Output \"{`\"systemMessage`\": `\"Reminder: You have $count uncommitted file(s). It's a good time to commit your changes so you don't lose your progress (git commit -m 'your message').`\"}\" }",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
