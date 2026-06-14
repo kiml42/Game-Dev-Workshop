@@ -1,5 +1,8 @@
 {
     "name": "EditModeTests",
+    "references": [
+        "GameCode"
+    ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
