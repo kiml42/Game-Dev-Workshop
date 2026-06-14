@@ -1,15 +1,16 @@
+using System;
+
 public class ScoreTracker
 {
-    public int Score { get; private set; }
+    public int Score => throw new NotImplementedException();
 
     public void AddPoints(int points)
     {
-        if (points > 0)
-            Score += points;
+        throw new NotImplementedException();
     }
 
     public void Reset()
     {
-        Score = 0;
+        throw new NotImplementedException();
     }
 }
