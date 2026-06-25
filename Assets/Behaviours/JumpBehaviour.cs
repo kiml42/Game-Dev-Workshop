@@ -14,6 +14,11 @@ public class JumpBehaviour : MonoBehaviour
 
     public void SetInAirJumpZone(bool value) => _inAirJumpZone = value;
 
+    public void FlipGravity()
+    {
+        Physics.gravity = -Physics.gravity;
+    }
+
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
@@ -37,7 +42,8 @@ public class JumpBehaviour : MonoBehaviour
         {
             float effectiveGravity = Physics.gravity.magnitude * gravityMultiplier;
             float jumpVelocity = Mathf.Sqrt(2f * effectiveGravity * jumpHeight);
-            _rigidbody.linearVelocity = new Vector3(_rigidbody.linearVelocity.x, jumpVelocity, _rigidbody.linearVelocity.z);
+            Vector3 jumpDir = -Physics.gravity.normalized;
+            _rigidbody.linearVelocity = new Vector3(_rigidbody.linearVelocity.x, jumpDir.y * jumpVelocity, _rigidbody.linearVelocity.z);
 
             float jumpDuration = 2f * jumpVelocity / effectiveGravity;
             _jumpRotationSpeed = 180f / jumpDuration;
@@ -67,6 +73,6 @@ public class JumpBehaviour : MonoBehaviour
 
     bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, Vector3.down, 0.6f);
+        return Physics.Raycast(transform.position, Physics.gravity.normalized, 0.6f);
     }
 }
