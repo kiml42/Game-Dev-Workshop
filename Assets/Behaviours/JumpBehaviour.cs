@@ -8,7 +8,6 @@ public class JumpBehaviour : MonoBehaviour
 
     private Rigidbody _rigidbody;
     private float _jumpRotationSpeed;
-    private float _rotationRemaining;
     private bool _isJumping;
 
     void Start()
@@ -36,20 +35,16 @@ public class JumpBehaviour : MonoBehaviour
             float jumpVelocity = Mathf.Sqrt(2f * effectiveGravity * jumpHeight);
             _rigidbody.linearVelocity = new Vector3(_rigidbody.linearVelocity.x, jumpVelocity, _rigidbody.linearVelocity.z);
 
-            // 180 degrees spread evenly over the full jump arc
             float jumpDuration = 2f * jumpVelocity / effectiveGravity;
             _jumpRotationSpeed = 180f / jumpDuration;
-            _rotationRemaining = 180f;
             _isJumping = true;
         }
 
         if (_isJumping)
         {
-            float step = Mathf.Min(_jumpRotationSpeed * Time.deltaTime, _rotationRemaining);
-            transform.Rotate(Vector3.forward, -step, Space.World);
-            _rotationRemaining -= step;
+            transform.Rotate(Vector3.forward, -_jumpRotationSpeed * Time.deltaTime, Space.World);
 
-            if (_rotationRemaining <= 0f)
+            if (IsGrounded() && _rigidbody.linearVelocity.y <= 0f)
             {
                 SnapRotation();
                 _isJumping = false;
