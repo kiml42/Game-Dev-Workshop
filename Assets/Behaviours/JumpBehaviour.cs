@@ -8,6 +8,7 @@ public class JumpBehaviour : MonoBehaviour
 
     private Rigidbody _rigidbody;
     private float _jumpRotationSpeed;
+    private float _rotationRemaining;
     private bool _isJumping;
 
     void Start()
@@ -33,14 +34,17 @@ public class JumpBehaviour : MonoBehaviour
             // 180 degrees spread evenly over the full jump arc
             float jumpDuration = 2f * jumpVelocity / effectiveGravity;
             _jumpRotationSpeed = 180f / jumpDuration;
+            _rotationRemaining = 180f;
             _isJumping = true;
         }
 
         if (_isJumping)
         {
-            transform.Rotate(Vector3.right, _jumpRotationSpeed * Time.deltaTime, Space.World);
+            float step = Mathf.Min(_jumpRotationSpeed * Time.deltaTime, _rotationRemaining);
+            transform.Rotate(Vector3.forward, -step, Space.World);
+            _rotationRemaining -= step;
 
-            if (IsGrounded() && _rigidbody.linearVelocity.y <= 0f)
+            if (_rotationRemaining <= 0f)
                 _isJumping = false;
         }
     }
