@@ -4,6 +4,26 @@ public class RaceTrack : MonoBehaviour
 {
     public Material trackMaterial;
     public Material startLineMaterial;
+    public Material finishLineMaterial;
+    public Material racerMaterial;
+    public int racerCount = 3;
+
+    // Waypoints going clockwise around the right straight start
+    private static readonly Vector3[] Waypoints =
+    {
+        new Vector3( 46, 0.5f,  40),
+        new Vector3( 43, 0.5f,  52),
+        new Vector3(  0, 0.5f,  52),
+        new Vector3(-43, 0.5f,  52),
+        new Vector3(-46, 0.5f,  40),
+        new Vector3(-46, 0.5f,   0),
+        new Vector3(-46, 0.5f, -40),
+        new Vector3(-43, 0.5f, -52),
+        new Vector3(  0, 0.5f, -52),
+        new Vector3( 43, 0.5f, -52),
+        new Vector3( 46, 0.5f, -40),
+        new Vector3( 46, 0.5f,   0),
+    };
 
     private void Awake()
     {
@@ -26,8 +46,34 @@ public class RaceTrack : MonoBehaviour
 
         // Starting line
         var startLine = CreateSegment("Starting Line", new Vector3(46, 0.5f, -43), new Vector3(12, 0.01f, 0.5f));
+        Object.Destroy(startLine.GetComponent<Collider>());
         if (startLineMaterial != null)
             startLine.GetComponent<Renderer>().material = startLineMaterial;
+
+        // Finish line (just behind the start line)
+        var finishLine = CreateSegment("Finish Line", new Vector3(46, 0.5f, -47), new Vector3(12, 0.01f, 0.5f));
+        Object.Destroy(finishLine.GetComponent<Collider>());
+        if (finishLineMaterial != null)
+            finishLine.GetComponent<Renderer>().material = finishLineMaterial;
+
+        // AI racers
+        for (int i = 0; i < racerCount; i++)
+        {
+            var racer = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            racer.name = "AI Racer " + (i + 1);
+            racer.transform.localScale = new Vector3(1, 0.5f, 2);
+            racer.transform.position = new Vector3(46, 1.5f, -43 - (i + 1) * 4f);
+            racer.transform.rotation = Quaternion.Euler(0, 0, 0);
+
+            var rb = racer.AddComponent<Rigidbody>();
+            rb.mass = 1f;
+
+            if (racerMaterial != null)
+                racer.GetComponent<Renderer>().material = racerMaterial;
+
+            var ai = racer.AddComponent<AIRacer>();
+            ai.Init(Waypoints);
+        }
 
         // Outer walls (track outer edge: x ±52, z ±58)
         CreateWall("Wall Outer Top",    new Vector3(  0, 1,  58), new Vector3(104, 2, 1));
