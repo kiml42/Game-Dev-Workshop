@@ -25,7 +25,12 @@ public class JumpBehaviour : MonoBehaviour
 
     void Update()
     {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && IsGrounded())
+        bool jumpHeld = Keyboard.current.spaceKey.isPressed
+            || Keyboard.current.upArrowKey.isPressed
+            || Keyboard.current.wKey.isPressed
+            || Mouse.current.leftButton.isPressed;
+
+        if (jumpHeld && IsGrounded())
         {
             float effectiveGravity = Physics.gravity.magnitude * gravityMultiplier;
             float jumpVelocity = Mathf.Sqrt(2f * effectiveGravity * jumpHeight);
