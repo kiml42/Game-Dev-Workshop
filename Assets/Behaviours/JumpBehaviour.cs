@@ -45,8 +45,18 @@ public class JumpBehaviour : MonoBehaviour
             _rotationRemaining -= step;
 
             if (_rotationRemaining <= 0f)
+            {
+                SnapRotation();
                 _isJumping = false;
+            }
         }
+    }
+
+    void SnapRotation()
+    {
+        Vector3 euler = transform.eulerAngles;
+        euler.z = Mathf.Round(euler.z / 90f) * 90f;
+        transform.eulerAngles = euler;
     }
 
     bool IsGrounded()
