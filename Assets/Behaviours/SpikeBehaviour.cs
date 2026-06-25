@@ -7,6 +7,8 @@ public class SpikeBehaviour : MonoBehaviour
 
     void Start()
     {
+        GetComponent<Collider>().isTrigger = true;
+
         var cube = FindFirstObjectByType<JumpBehaviour>();
         _cubeRigidbody = cube.GetComponent<Rigidbody>();
         _cubeStartPosition = _cubeRigidbody.transform.position;
