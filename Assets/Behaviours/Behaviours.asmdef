@@ -1,0 +1,6 @@
+{
+    "name": "Behaviours",
+    "references": [
+        "Unity.InputSystem"
+    ]
+}
