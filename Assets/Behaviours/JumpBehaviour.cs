@@ -3,7 +3,8 @@ using UnityEngine.InputSystem;
 
 public class JumpBehaviour : MonoBehaviour
 {
-    public float jumpForce = 5f;
+    public float jumpHeight = 2f;
+    public float gravityMultiplier = 3f;
 
     private Rigidbody _rigidbody;
 
@@ -12,16 +13,25 @@ public class JumpBehaviour : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
 
-    bool IsGrounded()
+    void FixedUpdate()
     {
-        return Physics.Raycast(transform.position, Vector3.down, 0.6f);
+        // Apply extra gravity on top of Unity's default
+        _rigidbody.AddForce(Physics.gravity * (gravityMultiplier - 1f), ForceMode.Acceleration);
     }
 
     void Update()
     {
         if (Keyboard.current.spaceKey.wasPressedThisFrame && IsGrounded())
         {
-            _rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            // v = sqrt(2 * g_eff * h) — gives the same apex regardless of gravity scale
+            float effectiveGravity = Physics.gravity.magnitude * gravityMultiplier;
+            float jumpVelocity = Mathf.Sqrt(2f * effectiveGravity * jumpHeight);
+            _rigidbody.linearVelocity = new Vector3(_rigidbody.linearVelocity.x, jumpVelocity, _rigidbody.linearVelocity.z);
         }
+    }
+
+    bool IsGrounded()
+    {
+        return Physics.Raycast(transform.position, Vector3.down, 0.6f);
     }
 }
