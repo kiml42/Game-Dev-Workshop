@@ -10,6 +10,9 @@ public class JumpBehaviour : MonoBehaviour
     private float _jumpRotationSpeed;
     private bool _isJumping;
     private bool _wasGrounded;
+    private bool _inAirJumpZone;
+
+    public void SetInAirJumpZone(bool value) => _inAirJumpZone = value;
 
     void Start()
     {
@@ -30,7 +33,7 @@ public class JumpBehaviour : MonoBehaviour
             || Keyboard.current.wKey.isPressed
             || Mouse.current.leftButton.isPressed;
 
-        if (jumpHeld && IsGrounded())
+        if (jumpHeld && (IsGrounded() || _inAirJumpZone))
         {
             float effectiveGravity = Physics.gravity.magnitude * gravityMultiplier;
             float jumpVelocity = Mathf.Sqrt(2f * effectiveGravity * jumpHeight);
