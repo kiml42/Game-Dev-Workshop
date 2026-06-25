@@ -54,7 +54,8 @@ public class JumpBehaviour : MonoBehaviour
 
         if (!grounded)
         {
-            transform.Rotate(Vector3.forward, -_jumpRotationSpeed * Time.deltaTime, Space.World);
+            float gravitySign = Mathf.Sign(Physics.gravity.y);
+            transform.Rotate(Vector3.forward, gravitySign * _jumpRotationSpeed * Time.deltaTime, Space.World);
         }
         else if (!_wasGrounded)
         {
