@@ -4,7 +4,7 @@ public class AIRacer : MonoBehaviour
 {
     public float moveForce = 50f;
     public float turnTorque = 20f;
-    public float maxSpeed = 12f;
+    public float maxSpeed = 8f;
     public float waypointRadius = 5f;
 
     private Rigidbody rb;

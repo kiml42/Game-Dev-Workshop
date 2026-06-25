@@ -8,21 +8,25 @@ public class RaceTrack : MonoBehaviour
     public Material racerMaterial;
     public int racerCount = 3;
 
-    // Waypoints going clockwise around the right straight start
+    // Waypoints going clockwise, using outer apexes at corners to avoid inner walls
     private static readonly Vector3[] Waypoints =
     {
-        new Vector3( 46, 0.5f,  40),
-        new Vector3( 43, 0.5f,  52),
-        new Vector3(  0, 0.5f,  52),
-        new Vector3(-43, 0.5f,  52),
-        new Vector3(-46, 0.5f,  40),
-        new Vector3(-46, 0.5f,   0),
-        new Vector3(-46, 0.5f, -40),
-        new Vector3(-43, 0.5f, -52),
-        new Vector3(  0, 0.5f, -52),
-        new Vector3( 43, 0.5f, -52),
-        new Vector3( 46, 0.5f, -40),
-        new Vector3( 46, 0.5f,   0),
+        new Vector3( 46, 0.5f,  20),   // right straight
+        new Vector3( 46, 0.5f,  43),   // approach TR corner
+        new Vector3( 49, 0.5f,  49),   // TR corner apex (outer)
+        new Vector3( 43, 0.5f,  55),   // exit TR corner
+        new Vector3(  0, 0.5f,  52),   // top straight
+        new Vector3(-43, 0.5f,  55),   // approach TL corner
+        new Vector3(-49, 0.5f,  49),   // TL corner apex (outer)
+        new Vector3(-46, 0.5f,  43),   // exit TL corner
+        new Vector3(-46, 0.5f,   0),   // left straight
+        new Vector3(-46, 0.5f, -43),   // approach BL corner
+        new Vector3(-49, 0.5f, -49),   // BL corner apex (outer)
+        new Vector3(-43, 0.5f, -55),   // exit BL corner
+        new Vector3(  0, 0.5f, -52),   // bottom straight
+        new Vector3( 43, 0.5f, -55),   // approach BR corner
+        new Vector3( 49, 0.5f, -49),   // BR corner apex (outer)
+        new Vector3( 46, 0.5f, -43),   // exit BR corner
     };
 
     private void Awake()
@@ -62,7 +66,7 @@ public class RaceTrack : MonoBehaviour
             var racer = GameObject.CreatePrimitive(PrimitiveType.Cube);
             racer.name = "AI Racer " + (i + 1);
             racer.transform.localScale = new Vector3(1, 0.5f, 2);
-            racer.transform.position = new Vector3(46, 1.5f, -43 - (i + 1) * 4f);
+            racer.transform.position = new Vector3(46, 1.5f, -43 + (i + 1) * 4f);
             racer.transform.rotation = Quaternion.Euler(0, 0, 0);
 
             var rb = racer.AddComponent<Rigidbody>();
