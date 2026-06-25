@@ -9,6 +9,7 @@ public class JumpBehaviour : MonoBehaviour
     private Rigidbody _rigidbody;
     private float _jumpRotationSpeed;
     private bool _isJumping;
+    private bool _wasGrounded;
 
     void Start()
     {
@@ -40,16 +41,18 @@ public class JumpBehaviour : MonoBehaviour
             _isJumping = true;
         }
 
-        if (_isJumping)
+        bool grounded = IsGrounded();
+
+        if (!grounded)
         {
             transform.Rotate(Vector3.forward, -_jumpRotationSpeed * Time.deltaTime, Space.World);
-
-            if (IsGrounded() && _rigidbody.linearVelocity.y <= 0f)
-            {
-                SnapRotation();
-                _isJumping = false;
-            }
         }
+        else if (!_wasGrounded)
+        {
+            SnapRotation();
+        }
+
+        _wasGrounded = grounded;
     }
 
     void SnapRotation()
