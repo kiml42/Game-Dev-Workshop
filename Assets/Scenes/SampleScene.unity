@@ -369,7 +369,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49537136bcc01094fbdd508911bfefb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::JumpBehaviour
-  jumpForce: 2.5
+  jumpForce: 4
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
