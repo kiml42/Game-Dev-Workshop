@@ -7,26 +7,41 @@ public class JumpBehaviour : MonoBehaviour
     public float gravityMultiplier = 3f;
 
     private Rigidbody _rigidbody;
+    private float _jumpRotationSpeed;
+    private bool _isJumping;
 
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
     }
 
     void FixedUpdate()
     {
-        // Apply extra gravity on top of Unity's default
         _rigidbody.AddForce(Physics.gravity * (gravityMultiplier - 1f), ForceMode.Acceleration);
+        _rigidbody.linearVelocity = new Vector3(4f, _rigidbody.linearVelocity.y, _rigidbody.linearVelocity.z);
     }
 
     void Update()
     {
         if (Keyboard.current.spaceKey.wasPressedThisFrame && IsGrounded())
         {
-            // v = sqrt(2 * g_eff * h) — gives the same apex regardless of gravity scale
             float effectiveGravity = Physics.gravity.magnitude * gravityMultiplier;
             float jumpVelocity = Mathf.Sqrt(2f * effectiveGravity * jumpHeight);
             _rigidbody.linearVelocity = new Vector3(_rigidbody.linearVelocity.x, jumpVelocity, _rigidbody.linearVelocity.z);
+
+            // 180 degrees spread evenly over the full jump arc
+            float jumpDuration = 2f * jumpVelocity / effectiveGravity;
+            _jumpRotationSpeed = 180f / jumpDuration;
+            _isJumping = true;
+        }
+
+        if (_isJumping)
+        {
+            transform.Rotate(Vector3.right, _jumpRotationSpeed * Time.deltaTime, Space.World);
+
+            if (IsGrounded() && _rigidbody.linearVelocity.y <= 0f)
+                _isJumping = false;
         }
     }
 
