@@ -20,7 +20,7 @@ public class JumpBehaviour : MonoBehaviour
     void FixedUpdate()
     {
         _rigidbody.AddForce(Physics.gravity * (gravityMultiplier - 1f), ForceMode.Acceleration);
-        _rigidbody.linearVelocity = new Vector3(12f, _rigidbody.linearVelocity.y, _rigidbody.linearVelocity.z);
+        _rigidbody.linearVelocity = new Vector3(10f, _rigidbody.linearVelocity.y, _rigidbody.linearVelocity.z);
     }
 
     void Update()
