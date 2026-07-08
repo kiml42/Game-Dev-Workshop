@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Scatters randomly-chosen prefabs across a ground area, each at a random heading.
+// Runs at runtime only (on Start) — it never creates objects in the editor.
 //
 // Setup: add this to the ground object itself. That object supplies:
 //   - the area size, from its X and Z scale;
@@ -25,20 +26,21 @@ public class PrefabScatterer : MonoBehaviour
              "10 units per scale unit, so leave this at 10 for a Plane; use 1 for a Cube/Quad.")]
     public float sizePerScaleUnit = 10f;
 
-    // Instances created by the most recent scatter, so we can clear them before re-scattering.
-    private readonly List<GameObject> _spawned = new List<GameObject>();
+    [Tooltip("On: fully random 3D orientation (instances can tumble). Off: random heading " +
+             "only, keeping instances upright on the ground.")]
+    public bool randomOrientation = false;
+
+    // Shared parent for every scatterer's instances, so they don't clutter the hierarchy.
+    // Created lazily the first time any scatterer needs it.
+    private static Transform _container;
 
     void Start()
     {
         Scatter();
     }
 
-    // Also runnable from the component's context menu to preview in the editor.
-    [ContextMenu("Scatter")]
     public void Scatter()
     {
-        Clear();
-
         if (prefabs == null || prefabs.Count == 0)
         {
             Debug.LogWarning($"{name}: no prefabs assigned to scatter.", this);
@@ -53,6 +55,8 @@ public class PrefabScatterer : MonoBehaviour
         float halfX = ground.localScale.x * sizePerScaleUnit * 0.5f * areaFill;
         float halfZ = ground.localScale.z * sizePerScaleUnit * 0.5f * areaFill;
 
+        Transform parent = GetContainer();
+
         for (int i = 0; i < count; i++)
         {
             GameObject prefab = prefabs[Random.Range(0, prefabs.Count)];
@@ -64,28 +68,24 @@ public class PrefabScatterer : MonoBehaviour
                 + ground.right * Random.Range(-halfX, halfX)
                 + ground.forward * Random.Range(-halfZ, halfZ);
 
-            // Random heading about the ground's up axis, keeping instances upright on it.
-            Quaternion rotation = ground.rotation * Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
+            // Either a fully random tumble, or just a random heading about the ground's up
+            // axis (upright on the surface).
+            Quaternion rotation = randomOrientation
+                ? Random.rotation
+                : ground.rotation * Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
 
-            _spawned.Add(Instantiate(prefab, position, rotation));
+            Instantiate(prefab, position, rotation, parent);
         }
     }
 
-    // Removes everything created by the previous scatter.
-    public void Clear()
+    // Returns the shared container, creating it on first use. The == null check also catches
+    // the case where a previous scene's container was destroyed (Unity reports it as null).
+    private static Transform GetContainer()
     {
-        foreach (GameObject instance in _spawned)
+        if (_container == null)
         {
-            if (instance == null) continue;
-            if (Application.isPlaying)
-            {
-                Destroy(instance);
-            }
-            else
-            {
-                DestroyImmediate(instance);
-            }
+            _container = new GameObject("Scattered Objects").transform;
         }
-        _spawned.Clear();
+        return _container;
     }
 }

@@ -129,5 +129,7 @@ MonoBehaviour:
   prefabs:
   - {fileID: 4913662163099824651, guid: 8e8b77804fd95ca459077222869372b6, type: 3}
   - {fileID: 7894040453049960973, guid: 14a7add70be0b1e4499ab6a45806f188, type: 3}
-  count: 200
+  count: 400
   areaFill: 1
+  sizePerScaleUnit: 10
+  randomOrientation: 1
