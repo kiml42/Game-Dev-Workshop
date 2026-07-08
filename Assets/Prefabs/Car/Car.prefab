@@ -158,7 +158,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8277573305732671393}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 500
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -189,9 +189,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4a1e7b209d34f6a8b1c5d2e3f4a6b70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  motorForce: 100
+  motorTorque: 100
   boostForce: 10
   boostWindow: 0.2
+  centerOfMass: {x: 0, y: -0.5, z: 0}
 --- !u!1001 &280342879193720573
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -204,17 +205,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wheel FL
       objectReference: {fileID: 0}
-    - target: {fileID: 7853419992926110914, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
-      propertyPath: m_ConnectedBody
-      value: 
-      objectReference: {fileID: 6749719973205386264}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: -0.4
       objectReference: {fileID: 0}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -270,17 +267,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wheel RL
       objectReference: {fileID: 0}
-    - target: {fileID: 7853419992926110914, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
-      propertyPath: m_ConnectedBody
-      value: 
-      objectReference: {fileID: 6749719973205386264}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: -0.4
       objectReference: {fileID: 0}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -336,17 +329,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wheel FR
       objectReference: {fileID: 0}
-    - target: {fileID: 7853419992926110914, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
-      propertyPath: m_ConnectedBody
-      value: 
-      objectReference: {fileID: 6749719973205386264}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: -0.4
       objectReference: {fileID: 0}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -402,17 +391,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wheel RR
       objectReference: {fileID: 0}
-    - target: {fileID: 7853419992926110914, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
-      propertyPath: m_ConnectedBody
-      value: 
-      objectReference: {fileID: 6749719973205386264}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.4
       objectReference: {fileID: 0}
     - target: {fileID: 8130395142153788644, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
       propertyPath: m_LocalPosition.z
