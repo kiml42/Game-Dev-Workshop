@@ -1,20 +1,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Drives the car forwards with physics forces while the up arrow is held,
-// and rolls the wheels to match how fast the car is actually moving.
+// Drives the car forwards with physics forces while the up arrow is held.
+// The wheels are attached to the body with HingeJoints, so the physics engine
+// rolls them from ground friction — there is no wheel-rolling code here.
 // Timing bonus: press the up arrow just as the car lands to get a speed boost.
 // Attached to the Car prefab, which has a Rigidbody.
 public class CarController : MonoBehaviour
 {
     // Forward force applied to the Rigidbody while the up arrow is held.
     public float motorForce = 10f;
-
-    // The four wheels; they spin to match how far the car drives.
-    public Transform[] wheels;
-
-    // Wheel radius in world units; controls how fast the wheels spin.
-    public float wheelRadius = 0.5f;
 
     // Impulse added when the up arrow is pressed in time with a landing.
     public float boostForce = 10f;
@@ -23,11 +18,12 @@ public class CarController : MonoBehaviour
     public float boostWindow = 0.2f;
 
     private Rigidbody _rigidbody;
+    private int _wheelsOnGround;
     private float _lastLandTime = -999f;
     private float _lastPressTime = -999f;
     private bool _boostedThisLanding;
 
-    // Awake runs before any physics callbacks, so the Rigidbody is ready for OnCollisionEnter.
+    // Awake runs before any physics callbacks so the Rigidbody is ready in time.
     void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
@@ -49,22 +45,29 @@ public class CarController : MonoBehaviour
         // Read the up arrow directly from the new Input System.
         if (Keyboard.current != null && Keyboard.current.upArrowKey.isPressed)
         {
-            // Push the car along its "nose" direction. The Rigidbody's damping balances
-            // this out at a natural top speed, so no manual speed cap is needed.
+            // Push the car along its "nose" direction. The wheels roll along via their
+            // HingeJoints, and the Rigidbody's damping settles it at a natural top speed.
             _rigidbody.AddForce(transform.forward * motorForce, ForceMode.Force);
         }
-
-        // Roll the wheels by the distance the car actually travels this step.
-        float forwardSpeed = Vector3.Dot(_rigidbody.linearVelocity, transform.forward);
-        RollWheels(forwardSpeed * Time.fixedDeltaTime);
     }
 
-    // Called by the physics engine when the car starts touching something (e.g. the ground).
-    void OnCollisionEnter(Collision collision)
+    // Called by a wheel's WheelCollisionRelay when that wheel starts touching a surface.
+    public void WheelTouchedGround()
     {
-        _lastLandTime = Time.time;
-        _boostedThisLanding = false;
-        TryBoost();
+        // The moment the first wheel makes contact counts as "hitting the ground".
+        if (_wheelsOnGround == 0)
+        {
+            _lastLandTime = Time.time;
+            _boostedThisLanding = false;
+            TryBoost();
+        }
+        _wheelsOnGround++;
+    }
+
+    // Called by a wheel's WheelCollisionRelay when that wheel stops touching a surface.
+    public void WheelLeftGround()
+    {
+        _wheelsOnGround = Mathf.Max(0, _wheelsOnGround - 1);
     }
 
     // Gives a one-off boost when a press and a landing happen within boostWindow of each other.
@@ -77,18 +80,5 @@ public class CarController : MonoBehaviour
 
         _rigidbody.AddForce(transform.forward * boostForce, ForceMode.Impulse);
         _boostedThisLanding = true;
-    }
-
-    // Spins each wheel around its axle by the arc length the car just travelled.
-    private void RollWheels(float distance)
-    {
-        // A wheel of radius r turns (distance / r) radians when it rolls that distance.
-        // Negated so the wheels roll in the direction of travel (spin around the axle the correct way).
-        float degrees = -(distance / wheelRadius) * Mathf.Rad2Deg;
-        foreach (Transform wheel in wheels)
-        {
-            // The wheel cylinder's local Y axis is its axle, so spin around that.
-            wheel.Rotate(0f, degrees, 0f, Space.Self);
-        }
     }
 }

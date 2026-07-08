@@ -190,12 +190,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   motorForce: 100
-  wheels:
-  - {fileID: 8302118813772921369}
-  - {fileID: 4535807154992197619}
-  - {fileID: 2722995130436039227}
-  - {fileID: 6005896240062727261}
-  wheelRadius: 0.5
   boostForce: 10
   boostWindow: 0.2
 --- !u!1001 &280342879193720573
@@ -250,6 +244,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7853419992926110914, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
+      propertyPath: m_ConnectedBody
+      value:
+      objectReference: {fileID: 6749719973205386264}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -312,6 +310,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7853419992926110914, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
+      propertyPath: m_ConnectedBody
+      value:
+      objectReference: {fileID: 6749719973205386264}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -374,6 +376,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7853419992926110914, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
+      propertyPath: m_ConnectedBody
+      value:
+      objectReference: {fileID: 6749719973205386264}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -436,6 +442,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7853419992926110914, guid: 48b1557da3c27e040b8db9193fc1bcf7, type: 3}
+      propertyPath: m_ConnectedBody
+      value:
+      objectReference: {fileID: 6749719973205386264}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
