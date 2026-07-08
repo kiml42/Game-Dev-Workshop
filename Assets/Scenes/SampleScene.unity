@@ -384,10 +384,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7020108613438881810, guid: 78841c1e6418f0b468a7a1bb3ca103f8, type: 3}
-      propertyPath: density
-      value: 0.1
-      objectReference: {fileID: 0}
     - target: {fileID: 8850893220060350549, guid: 78841c1e6418f0b468a7a1bb3ca103f8, type: 3}
       propertyPath: m_Name
       value: Ground (1)
