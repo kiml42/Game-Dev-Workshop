@@ -30,6 +30,12 @@ public class PrefabScatterer : MonoBehaviour
              "only, keeping instances upright on the ground.")]
     public bool randomOrientation = false;
 
+    [Tooltip("Smallest size multiplier applied to a scattered instance.")]
+    public float minScale = 0.8f;
+
+    [Tooltip("Largest size multiplier applied to a scattered instance.")]
+    public float maxScale = 1.2f;
+
     // Shared parent for every scatterer's instances, so they don't clutter the hierarchy.
     // Created lazily the first time any scatterer needs it.
     private static Transform _container;
@@ -74,7 +80,10 @@ public class PrefabScatterer : MonoBehaviour
                 ? Random.rotation
                 : ground.rotation * Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
 
-            Instantiate(prefab, position, rotation, parent);
+            GameObject instance = Instantiate(prefab, position, rotation, parent);
+
+            // Randomise the overall size, scaling the prefab's own scale uniformly.
+            instance.transform.localScale *= Random.Range(minScale, maxScale);
         }
     }
 
