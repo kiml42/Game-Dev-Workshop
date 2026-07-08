@@ -1,15 +1,21 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Drives the car forwards by applying motor torque to the wheels while the up arrow is held.
-// The wheels use WheelColliders, so the physics engine handles traction and rolling;
-// WheelVisual spins the meshes to match. Landing is detected via WheelCollider.isGrounded.
+// Drives the car with the arrow keys, using the WheelColliders:
+//   Up/Down    — forward / reverse motor torque
+//   Left/Right — steer the front wheels
+// The physics engine handles traction and rolling; WheelVisual spins the meshes to match.
+// Landing is detected via WheelCollider.isGrounded.
 // Timing bonus: press the up arrow just as the car lands to get a speed boost.
 // Attached to the Car prefab, which has a Rigidbody.
 public class CarController : MonoBehaviour
 {
-    // Motor torque (N·m) applied to the wheels while the up arrow is held.
+    // Motor torque (N·m) applied to the drive wheels for forward and reverse.
     public float motorTorque = 100f;
+
+    // Maximum steer angle (degrees) applied to the front wheels at full lock.
+    public float maxSteerAngle = 30f;
 
     // Impulse added when the up arrow is pressed in time with a landing.
     public float boostForce = 10f;
@@ -23,6 +29,7 @@ public class CarController : MonoBehaviour
 
     private Rigidbody _rigidbody;
     private WheelCollider[] _wheels;
+    private WheelCollider[] _frontWheels;
     private bool _wasGrounded = true;
     private float _lastLandTime = -999f;
     private float _lastPressTime = -999f;
@@ -33,6 +40,17 @@ public class CarController : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody>();
         _wheels = GetComponentsInChildren<WheelCollider>();
+
+        // The front wheels sit ahead of the car's centre (local Z > 0); only they steer.
+        List<WheelCollider> fronts = new List<WheelCollider>();
+        foreach (WheelCollider wheel in _wheels)
+        {
+            if (wheel.transform.localPosition.z > 0f)
+            {
+                fronts.Add(wheel);
+            }
+        }
+        _frontWheels = fronts.ToArray();
 
         // Drop the centre of mass low so the wheels' drive force can't flip the body.
         _rigidbody.centerOfMass = centerOfMass;
@@ -48,16 +66,29 @@ public class CarController : MonoBehaviour
         }
     }
 
-    // FixedUpdate is called on the physics timestep; drive the wheels here.
+    // FixedUpdate is called on the physics timestep; drive and steer the wheels here.
     void FixedUpdate()
     {
-        // Read the up arrow directly from the new Input System, and apply drive torque to
-        // every wheel (or zero when released). The WheelColliders turn that into motion.
-        bool accelerating = Keyboard.current != null && Keyboard.current.upArrowKey.isPressed;
-        float torque = accelerating ? motorTorque : 0f;
+        // Read the arrow keys as steady held inputs from the new Input System.
+        float drive = 0f;
+        float steer = 0f;
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard != null)
+        {
+            if (keyboard.upArrowKey.isPressed) drive += 1f;    // forward
+            if (keyboard.downArrowKey.isPressed) drive -= 1f;  // reverse
+            if (keyboard.leftArrowKey.isPressed) steer -= 1f;  // turn left
+            if (keyboard.rightArrowKey.isPressed) steer += 1f; // turn right
+        }
+
+        // Drive torque goes to every wheel; steering only to the front wheels.
         foreach (WheelCollider wheel in _wheels)
         {
-            wheel.motorTorque = torque;
+            wheel.motorTorque = drive * motorTorque;
+        }
+        foreach (WheelCollider wheel in _frontWheels)
+        {
+            wheel.steerAngle = steer * maxSteerAngle;
         }
 
         // Watch the wheels for the moment the car lands, so the boost can react to it.
