@@ -15,8 +15,9 @@ public class PrefabScatterer : MonoBehaviour
     [Tooltip("Prefabs chosen from at random, one per scattered instance.")]
     public List<GameObject> prefabs = new List<GameObject>();
 
-    [Tooltip("Number of instances to scatter.")]
-    public int count = 20;
+    [Tooltip("Objects per square world unit. Multiplied by the ground's area to get the " +
+             "total count, so the same value suits any ground size.")]
+    public float density = 0.2f;
 
     [Tooltip("Fraction of the ground area to fill (1 = right to the edges, less leaves a margin).")]
     [Range(0f, 1f)]
@@ -60,6 +61,10 @@ public class PrefabScatterer : MonoBehaviour
         // mesh's scale into real world size (e.g. 10 for Unity's Plane).
         float halfX = ground.localScale.x * sizePerScaleUnit * 0.5f * areaFill;
         float halfZ = ground.localScale.z * sizePerScaleUnit * 0.5f * areaFill;
+
+        // Turn the density into an actual count based on the area being covered.
+        float area = (2f * halfX) * (2f * halfZ);
+        int count = Mathf.RoundToInt(density * area);
 
         Transform parent = GetContainer();
 
