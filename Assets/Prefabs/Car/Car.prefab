@@ -196,6 +196,8 @@ MonoBehaviour:
   - {fileID: 2722995130436039227}
   - {fileID: 6005896240062727261}
   wheelRadius: 0.5
+  boostForce: 10
+  boostWindow: 0.2
 --- !u!1001 &280342879193720573
 PrefabInstance:
   m_ObjectHideFlags: 0

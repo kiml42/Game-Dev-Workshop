@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 // Drives the car forwards with physics forces while the up arrow is held,
 // and rolls the wheels to match how fast the car is actually moving.
+// Timing bonus: press the up arrow just as the car lands to get a speed boost.
 // Attached to the Car prefab, which has a Rigidbody.
 public class CarController : MonoBehaviour
 {
@@ -15,12 +16,31 @@ public class CarController : MonoBehaviour
     // Wheel radius in world units; controls how fast the wheels spin.
     public float wheelRadius = 0.5f;
 
-    private Rigidbody _rigidbody;
+    // Impulse added when the up arrow is pressed in time with a landing.
+    public float boostForce = 10f;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    // How close (in seconds) the press and the landing must be to earn the boost.
+    public float boostWindow = 0.2f;
+
+    private Rigidbody _rigidbody;
+    private float _lastLandTime = -999f;
+    private float _lastPressTime = -999f;
+    private bool _boostedThisLanding;
+
+    // Awake runs before any physics callbacks, so the Rigidbody is ready for OnCollisionEnter.
+    void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    // Update runs every frame; read one-off key presses here so none are missed.
+    void Update()
+    {
+        if (Keyboard.current != null && Keyboard.current.upArrowKey.wasPressedThisFrame)
+        {
+            _lastPressTime = Time.time;
+            TryBoost();
+        }
     }
 
     // FixedUpdate is called on the physics timestep; apply forces to the Rigidbody here.
@@ -37,6 +57,26 @@ public class CarController : MonoBehaviour
         // Roll the wheels by the distance the car actually travels this step.
         float forwardSpeed = Vector3.Dot(_rigidbody.linearVelocity, transform.forward);
         RollWheels(forwardSpeed * Time.fixedDeltaTime);
+    }
+
+    // Called by the physics engine when the car starts touching something (e.g. the ground).
+    void OnCollisionEnter(Collision collision)
+    {
+        _lastLandTime = Time.time;
+        _boostedThisLanding = false;
+        TryBoost();
+    }
+
+    // Gives a one-off boost when a press and a landing happen within boostWindow of each other.
+    private void TryBoost()
+    {
+        // Only one boost per landing, and only if both events are recent.
+        if (_boostedThisLanding) return;
+        if (Time.time - _lastLandTime > boostWindow) return;
+        if (Time.time - _lastPressTime > boostWindow) return;
+
+        _rigidbody.AddForce(transform.forward * boostForce, ForceMode.Impulse);
+        _boostedThisLanding = true;
     }
 
     // Spins each wheel around its axle by the arc length the car just travelled.
