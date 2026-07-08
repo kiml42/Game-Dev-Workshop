@@ -17,6 +17,10 @@ public class CarController : MonoBehaviour
     // Maximum steer angle (degrees) applied to the front wheels at full lock.
     public float maxSteerAngle = 30f;
 
+    // How fast the steering swings toward its target (degrees per second).
+    // At 120°/s the wheels reach a 30° lock in about a quarter second.
+    public float steerSpeed = 120f;
+
     // Impulse added when the up arrow is pressed in time with a landing.
     public float boostForce = 10f;
 
@@ -30,6 +34,7 @@ public class CarController : MonoBehaviour
     private Rigidbody _rigidbody;
     private WheelCollider[] _wheels;
     private WheelCollider[] _frontWheels;
+    private float _currentSteerAngle;
     private bool _wasGrounded = true;
     private float _lastLandTime = -999f;
     private float _lastPressTime = -999f;
@@ -81,6 +86,11 @@ public class CarController : MonoBehaviour
             if (keyboard.rightArrowKey.isPressed) steer += 1f; // turn right
         }
 
+        // Ease the steering toward its target angle instead of snapping to it, so the
+        // wheels turn over a realistic fraction of a second at a fixed angular rate.
+        float targetSteerAngle = steer * maxSteerAngle;
+        _currentSteerAngle = Mathf.MoveTowards(_currentSteerAngle, targetSteerAngle, steerSpeed * Time.fixedDeltaTime);
+
         // Drive torque goes to every wheel; steering only to the front wheels.
         foreach (WheelCollider wheel in _wheels)
         {
@@ -88,7 +98,7 @@ public class CarController : MonoBehaviour
         }
         foreach (WheelCollider wheel in _frontWheels)
         {
-            wheel.steerAngle = steer * maxSteerAngle;
+            wheel.steerAngle = _currentSteerAngle;
         }
 
         // Watch the wheels for the moment the car lands, so the boost can react to it.
