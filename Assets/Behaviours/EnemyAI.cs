@@ -1,12 +1,22 @@
 using UnityEngine;
 
 // Simple enemy behaviour: the enemy has a spherical vision range around it.
-// While the car is inside that sphere, the enemy walks toward it. Otherwise it does nothing.
+// While the car is inside that sphere, the enemy walks toward it using physics
+// (so walls block it). Otherwise it does nothing.
+[RequireComponent(typeof(Rigidbody))]
 public class EnemyAI : MonoBehaviour
 {
     public Transform target;
     public float visionRange = 10f;
     public float moveSpeed = 3f;
+    public float turnSpeed = 180f;   // degrees per second
+
+    private Rigidbody rb;
+
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
     void Start()
     {
@@ -18,24 +28,31 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (target == null)
-            return;
+        Vector3 velocity = rb.linearVelocity;
 
-        // Only react while the car is inside the vision sphere.
-        float distance = Vector3.Distance(transform.position, target.position);
-        if (distance > visionRange)
-            return;
-
-        // Walk toward the car, staying on the ground plane.
-        Vector3 direction = target.position - transform.position;
-        direction.y = 0f;
-        if (direction.sqrMagnitude > 0.0001f)
+        // Out of range (or no target): stop horizontal movement, keep falling under gravity.
+        if (target == null || Vector3.Distance(transform.position, target.position) > visionRange)
         {
-            transform.position += direction.normalized * moveSpeed * Time.deltaTime;
-            transform.rotation = Quaternion.LookRotation(direction);
+            rb.linearVelocity = new Vector3(0f, velocity.y, 0f);
+            return;
         }
+
+        // Direction to the car, flattened to the ground plane.
+        Vector3 direction = target.position - rb.position;
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.0001f)
+            return;
+
+        direction.Normalize();
+
+        // Move via the Rigidbody so collisions are respected. Preserve vertical velocity for gravity.
+        rb.linearVelocity = new Vector3(direction.x * moveSpeed, velocity.y, direction.z * moveSpeed);
+
+        // Turn to face the car via physics rotation.
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, targetRotation, turnSpeed * Time.fixedDeltaTime));
     }
 
     // Visualise the vision sphere in the Scene view.
