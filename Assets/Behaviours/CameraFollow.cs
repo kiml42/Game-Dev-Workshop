@@ -1,15 +1,13 @@
 using UnityEngine;
 
-// Keeps the camera trailing a target (the car) at a fixed offset.
+// Chase camera: stays behind and above a target (the car), following its heading, and looks at it.
 // If no target is assigned in the Inspector, it finds the CarMovement in the scene automatically.
 public class CameraFollow : MonoBehaviour
 {
     public Transform target;
+    public float distance = 8f;   // how far behind the car
+    public float height = 4f;     // how far above the car
     public float followSpeed = 5f;
-
-    // Offset from the target, captured from the camera's starting position so the
-    // scene's existing camera angle is preserved.
-    private Vector3 offset;
 
     void Start()
     {
@@ -19,9 +17,6 @@ public class CameraFollow : MonoBehaviour
             if (car != null)
                 target = car.transform;
         }
-
-        if (target != null)
-            offset = transform.position - target.position;
     }
 
     void LateUpdate()
@@ -29,7 +24,11 @@ public class CameraFollow : MonoBehaviour
         if (target == null)
             return;
 
-        Vector3 desiredPosition = target.position + offset;
+        // Sit behind the car (opposite its forward) and above it.
+        Vector3 desiredPosition = target.position - target.forward * distance + Vector3.up * height;
         transform.position = Vector3.Lerp(transform.position, desiredPosition, followSpeed * Time.deltaTime);
+
+        // Always face the car.
+        transform.LookAt(target.position);
     }
 }
