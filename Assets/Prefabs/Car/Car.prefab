@@ -192,6 +192,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveForce: 20
   turnTorque: 30
+  jumpForce: 10
+  groundCheckDistance: 1
 --- !u!1 &9110000000000000002
 GameObject:
   m_ObjectHideFlags: 0
